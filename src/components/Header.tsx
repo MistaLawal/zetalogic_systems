@@ -14,16 +14,18 @@ function AnnouncementBar() {
   if (!announcement.enabled || !announcement.text) return null;
   return (
     <div className="bg-ink text-white">
-      <Container className="flex items-center justify-center gap-3 py-2 text-[0.8125rem]">
-        <p className="truncate text-white/85">{announcement.text}</p>
-        <a
-          href={whatsappHref('Hello Zetalogic, I need help choosing a laptop.')}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="hidden shrink-0 font-semibold text-brand underline-offset-4 hover:underline sm:inline"
-        >
-          {announcement.link_label}
-        </a>
+      <Container className="py-2 text-center text-[0.78rem] leading-snug sm:text-[0.8125rem]">
+        <p className="text-white/85 [text-wrap:balance]">
+          {announcement.text}{' '}
+          <a
+            href={whatsappHref('Hello Zetalogic, I need help choosing a laptop.')}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="whitespace-nowrap font-semibold text-brand underline underline-offset-4 hover:text-white"
+          >
+            {announcement.link_label}
+          </a>
+        </p>
       </Container>
     </div>
   );
@@ -56,8 +58,8 @@ function SearchForm({ autoFocus, onDone, id }: { autoFocus?: boolean; onDone?: (
 }
 
 const navClass = ({ isActive }: { isActive: boolean }) =>
-  `relative py-2 text-[0.92rem] font-medium transition-colors ${
-    isActive ? 'text-ink after:absolute after:inset-x-0 after:-bottom-[1px] after:h-[2px] after:bg-brand' : 'text-ink/70 hover:text-ink'
+  `nav-link relative inline-flex h-11 items-center whitespace-nowrap text-[0.92rem] font-semibold transition-colors ${
+    isActive ? 'is-active text-ink' : 'text-ink/70 hover:text-ink'
   }`;
 
 export function Header() {
@@ -84,24 +86,18 @@ export function Header() {
   return (
     <>
       <AnnouncementBar />
-      <header className="sticky-header sticky z-40 border-b border-paper-line bg-white/95 backdrop-blur supports-[backdrop-filter]:bg-white/85">
-        <Container className="flex h-[68px] items-center gap-4 lg:gap-6">
+      <header className="sticky-header sticky z-40 border-b border-paper-line bg-white/95 backdrop-blur supports-[backdrop-filter]:bg-white/90">
+        {/* Row 1: logo, search, account, cart, quote */}
+        <Container className="flex h-[68px] items-center gap-3 lg:gap-6">
           <Link to="/" className="shrink-0 rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand" aria-label="Zetalogic Systems home">
-            <Logo className="w-[132px] sm:w-[148px]" />
+            <Logo className="w-[124px] sm:w-[148px]" />
           </Link>
 
-          <nav aria-label="Main" className="hidden flex-1 items-center gap-5 xl:flex">
-            {mainNav.map((item) => (
-              <NavLink key={item.to} to={item.to} end={item.to === '/services'} className={navClass}>
-                {item.label}
-              </NavLink>
-            ))}
-          </nav>
+          <div className="hidden max-w-xl flex-1 lg:block">
+            <SearchForm id="search-desktop" />
+          </div>
 
-          <div className="ml-auto flex items-center gap-1 sm:gap-2">
-            <div className="hidden w-56 lg:block xl:w-52 2xl:w-64">
-              <SearchForm id="search-desktop" />
-            </div>
+          <div className="ml-auto flex items-center gap-0.5 sm:gap-1 lg:gap-2">
             <button
               type="button"
               onClick={() => setSearchOpen((v) => !v)}
@@ -111,25 +107,48 @@ export function Header() {
             >
               <Search className="h-5 w-5" />
             </button>
-            <Link to={user ? '/account' : '/account/sign-in'} className="relative grid h-10 w-10 place-items-center rounded-btn text-ink hover:bg-paper-grey" aria-label={user ? 'Your account' : 'Sign in'}>
-              <User className="h-5 w-5" />
-              {user && <span aria-hidden="true" className="absolute bottom-1.5 right-1.5 h-2 w-2 rounded-full bg-brand ring-2 ring-white" />}
-            </Link>
-            <Link to="/cart" className="relative grid h-10 w-10 place-items-center rounded-btn text-ink hover:bg-paper-grey" aria-label={`Cart, ${count} ${count === 1 ? 'item' : 'items'}`}>
-              <ShoppingBag className="h-5 w-5" />
-              <span
-                aria-hidden="true"
-                className={`absolute right-0.5 top-0.5 grid min-w-[18px] place-items-center rounded-full px-1 text-[0.68rem] font-bold leading-[18px] tabular-nums ${count > 0 ? 'bg-brand text-ink' : 'bg-paper-line text-muted'}`}
-              >
-                {count}
+
+            {/* Account: icon on small screens, icon + text on desktop */}
+            {user ? (
+              <Link to="/account" className="header-action group relative flex h-10 items-center gap-2 rounded-btn px-2.5 text-ink hover:bg-paper-grey" aria-label="Your account">
+                <User className="h-5 w-5" aria-hidden="true" />
+                <span aria-hidden="true" className="absolute left-[1.55rem] top-[0.55rem] h-2 w-2 rounded-full bg-brand ring-2 ring-white" />
+                <span className="hidden whitespace-nowrap text-[0.9rem] font-semibold lg:inline">My account</span>
+              </Link>
+            ) : (
+              <>
+                <Link to="/account/sign-in" className="grid h-10 w-10 place-items-center rounded-btn text-ink hover:bg-paper-grey lg:hidden" aria-label="Sign in or create an account">
+                  <User className="h-5 w-5" />
+                </Link>
+                <div className="hidden items-center gap-1 lg:flex">
+                  <User className="mr-1 h-5 w-5 text-ink" aria-hidden="true" />
+                  <Link to="/account/sign-in" className="whitespace-nowrap rounded-md px-1.5 py-1 text-[0.9rem] font-semibold text-ink hover:bg-paper-grey hover:text-brand-deep">Sign in</Link>
+                  <span className="text-muted" aria-hidden="true">/</span>
+                  <Link to="/account/sign-up" className="whitespace-nowrap rounded-md px-1.5 py-1 text-[0.9rem] font-semibold text-ink hover:bg-paper-grey hover:text-brand-deep">Create account</Link>
+                </div>
+              </>
+            )}
+
+            <Link to="/cart" className="relative flex h-10 items-center gap-2 rounded-btn px-2.5 text-ink hover:bg-paper-grey" aria-label={`Cart, ${count} ${count === 1 ? 'item' : 'items'}`}>
+              <span className="relative">
+                <ShoppingBag className="h-5 w-5" aria-hidden="true" />
+                <span
+                  aria-hidden="true"
+                  className={`absolute -right-2.5 -top-2 grid min-w-[18px] place-items-center rounded-full px-1 text-[0.68rem] font-bold leading-[18px] tabular-nums ${count > 0 ? 'bg-brand text-ink' : 'bg-paper-line text-muted'}`}
+                >
+                  {count}
+                </span>
               </span>
+              <span className="hidden whitespace-nowrap pl-1 text-[0.9rem] font-semibold lg:inline">Cart</span>
             </Link>
-            <ButtonLink to="/contact#enquiry" className="ml-2 hidden !py-2.5 md:inline-flex">Get a Quote</ButtonLink>
+
+            <ButtonLink to="/contact#enquiry" className="ml-1 hidden whitespace-nowrap !px-4 !py-2.5 md:inline-flex">Get a Quote</ButtonLink>
+
             <button
               ref={menuBtn}
               type="button"
               onClick={() => setMenuOpen(true)}
-              className="grid h-10 w-10 place-items-center rounded-btn text-ink hover:bg-paper-grey xl:hidden"
+              className="grid h-10 w-10 place-items-center rounded-btn text-ink hover:bg-paper-grey lg:hidden"
               aria-label="Open menu"
               aria-expanded={menuOpen}
               aria-controls="mobile-menu"
@@ -138,6 +157,23 @@ export function Header() {
             </button>
           </div>
         </Container>
+
+        {/* Row 2 (desktop): main navigation on one line */}
+        <div className="hidden border-t border-paper-line lg:block">
+          <Container className="flex items-center justify-between gap-6">
+            <nav aria-label="Main" className="flex items-center gap-7">
+              {mainNav.map((item) => (
+                <NavLink key={item.to} to={item.to} end={item.to === '/services'} className={navClass}>
+                  {item.label}
+                </NavLink>
+              ))}
+            </nav>
+            <a href={telHref} className="flex shrink-0 items-center gap-2 whitespace-nowrap text-[0.85rem] font-semibold text-ink/70 hover:text-brand-deep">
+              <Phone className="h-4 w-4 text-brand-deep" aria-hidden="true" />{company.phoneDisplay}
+            </a>
+          </Container>
+        </div>
+
         {searchOpen && (
           <div className="border-t border-paper-line bg-white lg:hidden">
             <Container className="py-3"><SearchForm id="search-mobile" autoFocus onDone={() => setSearchOpen(false)} /></Container>
@@ -146,7 +182,7 @@ export function Header() {
       </header>
 
       {menuOpen && (
-        <div id="mobile-menu" role="dialog" aria-modal="true" aria-label="Menu" className="fixed inset-0 z-50 xl:hidden">
+        <div id="mobile-menu" role="dialog" aria-modal="true" aria-label="Menu" className="fixed inset-0 z-50 lg:hidden">
           <button className="absolute inset-0 bg-ink/40" aria-label="Close menu" onClick={() => setMenuOpen(false)} />
           <div className="mobile-sheet absolute inset-y-0 right-0 flex w-[min(88vw,380px)] flex-col bg-white shadow-2xl">
             <div className="flex h-[68px] items-center justify-between border-b border-paper-line px-5">
@@ -170,6 +206,14 @@ export function Header() {
               ))}
             </nav>
             <div className="space-y-3 border-t border-paper-line p-5">
+              {user ? (
+                <ButtonLink to="/account" variant="outline" className="w-full"><User className="h-4 w-4" aria-hidden="true" />My account</ButtonLink>
+              ) : (
+                <div className="grid grid-cols-2 gap-3">
+                  <ButtonLink to="/account/sign-in" variant="outline">Sign in</ButtonLink>
+                  <ButtonLink to="/account/sign-up" variant="dark">Create account</ButtonLink>
+                </div>
+              )}
               <ButtonLink to="/contact#enquiry" className="w-full">Get a Quote</ButtonLink>
               <div className="grid grid-cols-2 gap-3">
                 <a href={telHref} className="flex items-center justify-center gap-2 rounded-btn border border-paper-line py-2.5 text-sm font-semibold"><Phone className="h-4 w-4" />Call</a>

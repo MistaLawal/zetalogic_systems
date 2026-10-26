@@ -64,3 +64,13 @@
   .no-scrollbar { scrollbar-width: none; }
   .no-scrollbar::-webkit-scrollbar { display: none; }
 }
+
+@layer components {
+  /* Desktop nav: green underline grows from the left on hover, stays on the active page */
+  .nav-link::after {
+    content: ""; position: absolute; left: 0; right: 0; bottom: -1px; height: 2px;
+    background: #4CB748; transform: scaleX(0); transform-origin: left; transition: transform .2s ease;
+  }
+  .nav-link:hover::after, .nav-link:focus-visible::after, .nav-link.is-active::after { transform: scaleX(1); }
+  .nav-link:focus-visible { outline: none; color: #101010; }
+}
