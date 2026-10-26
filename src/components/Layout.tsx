@@ -3,6 +3,7 @@ import { Outlet, useLocation } from 'react-router-dom';
 import { Header } from './Header';
 import { Footer } from './Footer';
 import { WhatsAppFab } from './WhatsAppFab';
+import { CompareBar } from './CompareBar';
 
 function ScrollManager() {
   const { pathname, hash } = useLocation();
@@ -26,6 +27,7 @@ export function Layout() {
         <Outlet />
       </main>
       <Footer />
+      <CompareBar />
       <WhatsAppFab />
     </div>
   );

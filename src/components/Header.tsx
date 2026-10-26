@@ -3,12 +3,15 @@ import { Link, NavLink, useLocation, useNavigate } from 'react-router-dom';
 import { Menu, Search, ShoppingBag, User, X, Phone, MessageCircle } from 'lucide-react';
 import { Logo } from './Logo';
 import { Container, ButtonLink } from './ui';
-import { announcement, company, mainNav } from '../config/site';
+import { company, mainNav } from '../config/site';
+import { useSettings } from '../context/SettingsContext';
+import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
 import { telHref, whatsappHref } from '../lib/contact';
 
 function AnnouncementBar() {
-  if (!announcement.enabled) return null;
+  const { announcement } = useSettings();
+  if (!announcement.enabled || !announcement.text) return null;
   return (
     <div className="bg-ink text-white">
       <Container className="flex items-center justify-center gap-3 py-2 text-[0.8125rem]">
@@ -19,7 +22,7 @@ function AnnouncementBar() {
           rel="noopener noreferrer"
           className="hidden shrink-0 font-semibold text-brand underline-offset-4 hover:underline sm:inline"
         >
-          {announcement.linkLabel}
+          {announcement.link_label}
         </a>
       </Container>
     </div>
@@ -59,6 +62,7 @@ const navClass = ({ isActive }: { isActive: boolean }) =>
 
 export function Header() {
   const { count } = useCart();
+  const { user } = useAuth();
   const [menuOpen, setMenuOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const location = useLocation();
@@ -107,8 +111,9 @@ export function Header() {
             >
               <Search className="h-5 w-5" />
             </button>
-            <Link to="/account" className="grid h-10 w-10 place-items-center rounded-btn text-ink hover:bg-paper-grey" aria-label="Your account">
+            <Link to={user ? '/account' : '/account/sign-in'} className="relative grid h-10 w-10 place-items-center rounded-btn text-ink hover:bg-paper-grey" aria-label={user ? 'Your account' : 'Sign in'}>
               <User className="h-5 w-5" />
+              {user && <span aria-hidden="true" className="absolute bottom-1.5 right-1.5 h-2 w-2 rounded-full bg-brand ring-2 ring-white" />}
             </Link>
             <Link to="/cart" className="relative grid h-10 w-10 place-items-center rounded-btn text-ink hover:bg-paper-grey" aria-label={`Cart, ${count} ${count === 1 ? 'item' : 'items'}`}>
               <ShoppingBag className="h-5 w-5" />

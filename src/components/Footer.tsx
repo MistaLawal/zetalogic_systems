@@ -5,6 +5,7 @@ import { Container } from './ui';
 import { Newsletter } from './Newsletter';
 import { categories, company, services } from '../config/site';
 import { addressLine, mailHref, telHref, whatsappHref } from '../lib/contact';
+import { useSettings } from '../context/SettingsContext';
 
 const companyLinks = [
   { label: 'About us', to: '/about' },
@@ -43,7 +44,8 @@ function Col({ title, items }: { title: string; items: { label: string; to: stri
 }
 
 export function Footer() {
-  const socials = (Object.entries(company.socials) as [keyof typeof company.socials, string][]).filter(([, url]) => url);
+  const settings = useSettings();
+  const socials = (Object.entries(settings.socials) as [keyof typeof company.socials, string][]).filter(([, url]) => url && /^https:\/\//.test(url));
   return (
     <footer className="bg-black text-white">
       <Newsletter />

@@ -1,13 +1,15 @@
-// Form submission service. Phase 1 has no backend, so submissions report
-// `not_configured` and the UI offers WhatsApp instead. In Phase 2 these call a
-// Supabase Edge Function that validates on the server, rate-limits, checks the
-// honeypot and writes to `service_enquiries` / `newsletter_subscriptions`.
+// Form submission service. Posts to Supabase Edge Functions that validate on
+// the server, rate-limit by hashed IP, check the honeypot and write to
+// `service_enquiries` / `newsletter_subscriptions`. If the backend is not
+// configured, submissions report `not_configured` and the UI offers WhatsApp.
 
 export type SubmitResult =
   | { ok: true }
   | { ok: false; reason: 'not_configured' | 'network' | 'rejected'; message: string };
 
-const backendUrl = import.meta.env.VITE_SUPABASE_URL as string | undefined;
+import { supabaseKey, supabaseUrl } from './supabase';
+
+const backendUrl = supabaseUrl;
 
 async function post(fn: string, payload: unknown): Promise<SubmitResult> {
   if (!backendUrl) {
@@ -22,10 +24,14 @@ async function post(fn: string, payload: unknown): Promise<SubmitResult> {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        apikey: import.meta.env.VITE_SUPABASE_ANON_KEY as string,
+        apikey: supabaseKey ?? '',
       },
       body: JSON.stringify(payload),
     });
+    if (res.status === 429) {
+      const body = await res.json().catch(() => ({}));
+      return { ok: false, reason: 'rejected', message: body.error ?? 'Too many attempts. Try again later.' };
+    }
     if (!res.ok) {
       const body = await res.json().catch(() => ({}));
       return { ok: false, reason: 'rejected', message: body.error ?? 'The form could not be sent. Check the fields and try again.' };

@@ -6,6 +6,7 @@ import { EnquiryForm } from '../components/EnquiryForm';
 import { company } from '../config/site';
 import { addressLine, mailHref, telHref, whatsappHref } from '../lib/contact';
 import { usePageMeta } from '../lib/seo';
+import { useSettings } from '../context/SettingsContext';
 
 function CopyButton({ value, label }: { value: string; label: string }) {
   const [done, setDone] = useState(false);
@@ -22,6 +23,7 @@ function CopyButton({ value, label }: { value: string; label: string }) {
 }
 
 export default function Contact() {
+  const { business_hours } = useSettings();
   usePageMeta('Contact us', `Call ${company.phoneDisplay}, chat on WhatsApp or email ${company.email}. Zetalogic Systems, Ikorodu, Lagos.`);
   return (
     <>
@@ -66,7 +68,7 @@ export default function Contact() {
             <div>
               <h2 className="flex items-center gap-2 font-bold text-ink"><Clock className="h-4 w-4 text-brand-deep" aria-hidden="true" />Business hours (WAT)</h2>
               <dl className="mt-3 divide-y divide-paper-line border-y border-paper-line text-[0.95rem]">
-                {company.hours.map((h) => (
+                {business_hours.map((h) => (
                   <div key={h.days} className="flex justify-between py-2.5"><dt className="text-muted">{h.days}</dt><dd className="font-medium text-ink tabular-nums">{h.time}</dd></div>
                 ))}
               </dl>

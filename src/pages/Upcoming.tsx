@@ -6,11 +6,8 @@ import { usePageMeta } from '../lib/seo';
 
 // Routes that later phases will build (store, account, policies, blog…).
 const names: [RegExp, string, string][] = [
-  [/^\/store/, 'Online store', 'Browse, filter and buy laptops, accessories, software and downloads.'],
   [/^\/cart/, 'Your cart', 'Review items, change quantities and check out securely.'],
   [/^\/checkout/, 'Checkout', 'Pay securely by card or bank transfer through Paystack.'],
-  [/^\/account\/downloads/, 'Digital downloads', 'Access files and licences you’ve bought.'],
-  [/^\/account/, 'Your account', 'Track orders, manage addresses and access your downloads.'],
   [/^\/track-order/, 'Order tracking', 'Check where your delivery is.'],
   [/^\/blog/, 'Technology insights', 'Guides on laptops, software, security and automation.'],
   [/^\/faq/, 'Frequently asked questions', 'Answers on orders, delivery, payments and warranties.'],
