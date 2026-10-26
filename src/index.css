@@ -1,0 +1,52 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html { -webkit-text-size-adjust: 100%; scroll-behavior: smooth; }
+  html, body, #root { min-height: 100%; }
+  body {
+    @apply bg-white font-sans text-ink antialiased;
+    font-size: 16px;
+    line-height: 1.6;
+    color-scheme: light;
+  }
+  h1, h2, h3 { text-wrap: balance; }
+  :focus-visible { outline-color: #4CB748; }
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; }
+  }
+}
+
+@layer components {
+  /* Side gutter that also clears phone safe areas */
+  .gutter {
+    padding-left: max(16px, env(safe-area-inset-left, 0px));
+    padding-right: max(16px, env(safe-area-inset-right, 0px));
+  }
+  @media (min-width: 640px) { .gutter { padding-left: max(24px, env(safe-area-inset-left, 0px)); padding-right: max(24px, env(safe-area-inset-right, 0px)); } }
+  @media (min-width: 1024px) { .gutter { padding-left: 32px; padding-right: 32px; } }
+
+  .sticky-header { top: env(safe-area-inset-top, 0px); }
+
+  /* The angled wedge borrowed from the triangle in the Zetalogic mark */
+  .brand-wedge { clip-path: polygon(0% 12%, 100% 0%, 58% 100%); }
+
+  .fab {
+    right: calc(20px + env(safe-area-inset-right, 0px));
+    bottom: calc(20px + env(safe-area-inset-bottom, 0px));
+  }
+
+  /* One orchestrated page-load moment on the homepage hero */
+  .hero-copy > * { animation: rise .6s cubic-bezier(.2,.7,.2,1) both; }
+  .hero-copy > *:nth-child(2) { animation-delay: .06s; }
+  .hero-copy > *:nth-child(3) { animation-delay: .12s; }
+  .hero-copy > *:nth-child(4) { animation-delay: .18s; }
+  .hero-art { animation: settle .8s .1s cubic-bezier(.2,.7,.2,1) both; }
+  .mobile-sheet { animation: slidein .22s ease-out both; }
+}
+
+@keyframes rise { from { opacity: .001; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+@keyframes settle { from { opacity: .001; transform: translateY(18px) rotate(-1deg); } to { opacity: 1; transform: none; } }
+@keyframes slidein { from { transform: translateX(24px); opacity: .5; } to { transform: none; opacity: 1; } }
