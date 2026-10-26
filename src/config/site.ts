@@ -7,9 +7,9 @@ export const company = {
   tagline: 'Technology. Innovation. Business Growth.',
   statement:
     'Practical technology solutions that help businesses and individuals work smarter, operate efficiently, and grow confidently.',
-  phoneDisplay: '0702 630 7814',
-  phoneTel: '+2347026307814',
-  whatsapp: '2347026307814',
+  phoneDisplay: '0702 630 7847',
+  phoneTel: '+2347026307847',
+  whatsapp: '2347026307847',
   email: 'zetalogicsystems@gmail.com',
   // Placeholder street from the brief. Replace before launch.
   address: { street: 'xyz street', area: 'Ikorodu', city: 'Lagos', country: 'Nigeria' },

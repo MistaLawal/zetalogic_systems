@@ -49,7 +49,7 @@ export default function Contact() {
               </li>
               <li className="flex items-start gap-4 p-5">
                 <MessageCircle className="mt-0.5 h-5 w-5 shrink-0 text-brand-deep" aria-hidden="true" />
-                <div className="min-w-0 flex-1"><p className="text-sm text-muted">WhatsApp</p><a href={whatsappHref()} target="_blank" rel="noopener noreferrer" className="font-semibold text-ink hover:underline">+234 702 630 7814</a></div>
+                <div className="min-w-0 flex-1"><p className="text-sm text-muted">WhatsApp</p><a href={whatsappHref()} target="_blank" rel="noopener noreferrer" className="font-semibold text-ink hover:underline">+234 702 630 7847</a></div>
               </li>
               <li className="flex items-start gap-4 p-5">
                 <Mail className="mt-0.5 h-5 w-5 shrink-0 text-brand-deep" aria-hidden="true" />
