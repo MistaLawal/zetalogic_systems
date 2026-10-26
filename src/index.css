@@ -59,3 +59,8 @@
 @layer components {
   .compare-bar { bottom: calc(20px + env(safe-area-inset-bottom, 0px)); }
 }
+
+@layer utilities {
+  .no-scrollbar { scrollbar-width: none; }
+  .no-scrollbar::-webkit-scrollbar { display: none; }
+}

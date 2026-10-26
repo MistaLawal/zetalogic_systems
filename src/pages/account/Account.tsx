@@ -46,7 +46,7 @@ export function AccountLayout() {
         </Container>
       </section>
       <Container className="grid gap-8 py-10 lg:grid-cols-[220px_1fr] lg:gap-12">
-        <nav aria-label="Account" className="-mx-4 overflow-x-auto px-4 lg:mx-0 lg:px-0">
+        <nav aria-label="Account" className="no-scrollbar -mx-4 overflow-x-auto px-4 lg:mx-0 lg:px-0">
           <ul className="flex gap-2 lg:flex-col lg:gap-1">
             {nav.map(({ to, label, icon: I, end }) => (
               <li key={to} className="shrink-0">

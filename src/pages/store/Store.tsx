@@ -127,7 +127,7 @@ export default function Store() {
             {results.status === 'ready' && <p className="text-[0.92rem] text-muted tabular-nums" aria-live="polite">{total} {total === 1 ? 'product' : 'products'}</p>}
           </div>
           {categories.status === 'ready' && (
-            <nav aria-label="Categories" className="-mx-4 mt-6 overflow-x-auto px-4">
+            <nav aria-label="Categories" className="no-scrollbar -mx-4 mt-6 overflow-x-auto px-4">
               <ul className="flex gap-2">
                 <li><Link to={`/store${q ? `?q=${encodeURIComponent(q)}` : ''}`} className={`inline-flex whitespace-nowrap rounded-full border px-3.5 py-1.5 text-[0.85rem] font-semibold ${!slug ? 'border-ink bg-ink text-white' : 'border-paper-line bg-white text-ink hover:border-ink/40'}`}>All</Link></li>
                 {categories.data.map((c) => (
