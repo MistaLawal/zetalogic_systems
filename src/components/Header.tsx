@@ -9,6 +9,11 @@ import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
 import { telHref, whatsappHref } from '../lib/contact';
 
+function firstSentence(text: string) {
+  const m = text.match(/^.*?[?.!](\s|$)/);
+  return m ? m[0].trim() : text;
+}
+
 function AnnouncementBar() {
   const { announcement } = useSettings();
   if (!announcement.enabled || !announcement.text) return null;
@@ -16,7 +21,9 @@ function AnnouncementBar() {
     <div className="bg-ink text-white">
       <Container className="py-2 text-center text-[0.78rem] leading-snug sm:text-[0.8125rem]">
         <p className="text-white/85 [text-wrap:balance]">
-          {announcement.text}{' '}
+          {/* Phones show the first sentence only so the bar stays one or two lines */}
+          <span className="sm:hidden">{firstSentence(announcement.text)}</span>
+          <span className="hidden sm:inline">{announcement.text}</span>{' '}
           <a
             href={whatsappHref('Hello Zetalogic, I need help choosing a laptop.')}
             target="_blank"
@@ -210,8 +217,8 @@ export function Header() {
                 <ButtonLink to="/account" variant="outline" className="w-full"><User className="h-4 w-4" aria-hidden="true" />My account</ButtonLink>
               ) : (
                 <div className="grid grid-cols-2 gap-3">
-                  <ButtonLink to="/account/sign-in" variant="outline">Sign in</ButtonLink>
-                  <ButtonLink to="/account/sign-up" variant="dark">Create account</ButtonLink>
+                  <ButtonLink to="/account/sign-in" variant="outline" className="whitespace-nowrap !px-3">Sign in</ButtonLink>
+                  <ButtonLink to="/account/sign-up" variant="dark" className="whitespace-nowrap !px-3">Create account</ButtonLink>
                 </div>
               )}
               <ButtonLink to="/contact#enquiry" className="w-full">Get a Quote</ButtonLink>
