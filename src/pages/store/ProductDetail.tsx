@@ -14,6 +14,13 @@ import { usePageMeta } from '../../lib/seo';
 import type { ProductDetail as Product, Variant } from '../../types/catalog';
 import NotFound from '../NotFound';
 
+// The database stores specs as JSON, which doesn't keep key order; show the usual laptop order first.
+const SPEC_ORDER = ['Processor', 'RAM', 'Storage', 'Display', 'Graphics', 'Operating system', 'Battery', 'Weight', 'Colour'];
+function orderSpecs(specs: Record<string, string>) {
+  const rank = (k: string) => { const i = SPEC_ORDER.indexOf(k); return i === -1 ? SPEC_ORDER.length : i; };
+  return Object.entries(specs).sort(([a], [b]) => rank(a) - rank(b));
+}
+
 function priceFor(p: Product, v: Variant | undefined) {
   if (v?.priceKobo != null) {
     const sale = v.salePriceKobo != null && v.salePriceKobo < v.priceKobo ? v.salePriceKobo : null;
@@ -153,7 +160,7 @@ function ProductView({ p }: { p: Product }) {
 
           {p.variants.length > 0 && (
             <fieldset className="mt-7">
-              <legend className="mb-2.5 text-[0.92rem] font-bold text-ink">{attrNames.length ? `Choose ${attrNames.join(' / ').toLowerCase()}` : 'Choose an option'}</legend>
+              <legend className="mb-2.5 text-[0.92rem] font-bold text-ink">{attrNames.length ? `Choose ${attrNames.join(' / ')}` : 'Choose an option'}</legend>
               <div className="flex flex-wrap gap-2">
                 {p.variants.map((v) => {
                   const out = v.stock <= 0;
@@ -232,7 +239,7 @@ function ProductView({ p }: { p: Product }) {
               <div className="mt-4 overflow-x-auto">
                 <table className="w-full text-[0.92rem]">
                   <tbody className="divide-y divide-paper-line border-y border-paper-line">
-                    {Object.entries({ ...p.specs, ...(variant?.attributes ?? {}) }).map(([k, v]) => (
+                    {orderSpecs({ ...p.specs, ...(variant?.attributes ?? {}) }).map(([k, v]) => (
                       <tr key={k}><th scope="row" className="w-2/5 py-3 pr-4 text-left font-semibold text-ink">{k}</th><td className="py-3 text-ink/80">{String(v)}</td></tr>
                     ))}
                     {p.condition && <tr><th scope="row" className="py-3 pr-4 text-left font-semibold text-ink">Condition</th><td className="py-3 text-ink/80">{conditionLabel[p.condition]}</td></tr>}
