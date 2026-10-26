@@ -1,8 +1,13 @@
-# Edge Functions authorize requests in code (public forms), so platform JWT
-# verification is off. Both functions validate input, use a honeypot and
-# rate-limit by hashed IP before writing with the server-side secret key.
+# Edge Functions authorize requests in code, so platform JWT verification is off.
 [functions.submit-enquiry]
 verify_jwt = false
-
 [functions.newsletter-subscribe]
+verify_jwt = false
+[functions.checkout]
+verify_jwt = false
+[functions.paystack-webhook]
+verify_jwt = false
+[functions.payment-status]
+verify_jwt = false
+[functions.order-lookup]
 verify_jwt = false

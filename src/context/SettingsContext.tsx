@@ -8,12 +8,14 @@ export type Settings = {
   announcement: { enabled: boolean; text: string; link_label: string };
   business_hours: { days: string; time: string }[];
   socials: { instagram: string; linkedin: string; x: string; facebook: string };
+  bank_transfer: { enabled: boolean; bank_name: string; account_name: string; account_number: string };
 };
 
 const defaults: Settings = {
   announcement: { enabled: defaultAnnouncement.enabled, text: defaultAnnouncement.text, link_label: defaultAnnouncement.linkLabel },
   business_hours: [...company.hours],
   socials: { ...company.socials },
+  bank_transfer: { enabled: false, bank_name: '', account_name: '', account_number: '' },
 };
 
 const Ctx = createContext<Settings>(defaults);

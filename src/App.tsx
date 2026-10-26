@@ -29,13 +29,30 @@ const DownloadsPanel = lazy(() => acct().then((m) => ({ default: m.DownloadsPane
 const AddressesPanel = lazy(() => acct().then((m) => ({ default: m.AddressesPanel })));
 const WishlistPanel = lazy(() => acct().then((m) => ({ default: m.WishlistPanel })));
 
+const Cart = lazy(() => import('./pages/checkout/Cart'));
+const Checkout = lazy(() => import('./pages/checkout/Checkout'));
+const orderPages = () => import('./pages/checkout/OrderPages');
+const OrderPage = lazy(() => orderPages().then((m) => ({ default: m.OrderPage })));
+const CheckoutComplete = lazy(() => orderPages().then((m) => ({ default: m.CheckoutComplete })));
+const TrackOrder = lazy(() => orderPages().then((m) => ({ default: m.TrackOrder })));
+const admin = () => import('./pages/admin/AdminLayout');
+const AdminLayout = lazy(() => admin().then((m) => ({ default: m.AdminLayout })));
+const AdminProducts = lazy(() => import('./pages/admin/AdminProducts'));
+const AdminProductForm = lazy(() => import('./pages/admin/AdminProductForm'));
+const adminOrders = () => import('./pages/admin/AdminOrders');
+const AdminOrders = lazy(() => adminOrders().then((m) => ({ default: m.AdminOrders })));
+const AdminOrderDetail = lazy(() => adminOrders().then((m) => ({ default: m.AdminOrderDetail })));
+const adminSettings = () => import('./pages/admin/AdminSettings');
+const AdminDashboard = lazy(() => adminSettings().then((m) => ({ default: m.AdminDashboard })));
+const AdminSettings = lazy(() => adminSettings().then((m) => ({ default: m.AdminSettings })));
+
 const PageLoading = () => <div className="py-24 text-center text-muted" aria-busy="true">Loading…</div>;
 import Upcoming from './pages/Upcoming';
 import NotFound from './pages/NotFound';
 
 const Router = import.meta.env.VITE_ROUTER === 'hash' ? HashRouter : BrowserRouter;
 // Built in later phases
-const upcoming = ['/cart', '/checkout', '/track-order', '/blog/*', '/faq', '/policies/*'];
+const upcoming = ['/blog/*', '/faq', '/policies/*'];
 
 export default function App() {
   return (
@@ -47,6 +64,15 @@ export default function App() {
               <Router>
                 <Suspense fallback={<PageLoading />}>
                 <Routes>
+                  <Route path="admin" element={<AdminLayout />}>
+                    <Route index element={<AdminDashboard />} />
+                    <Route path="products" element={<AdminProducts />} />
+                    <Route path="products/new" element={<AdminProductForm />} />
+                    <Route path="products/:id" element={<AdminProductForm />} />
+                    <Route path="orders" element={<AdminOrders />} />
+                    <Route path="orders/:id" element={<AdminOrderDetail />} />
+                    <Route path="settings" element={<AdminSettings />} />
+                  </Route>
                   <Route element={<Layout />}>
                     <Route index element={<Home />} />
                     <Route path="about" element={<About />} />
@@ -58,6 +84,11 @@ export default function App() {
                     <Route path="store/category/:slug" element={<Store />} />
                     <Route path="store/product/:slug" element={<ProductDetail />} />
                     <Route path="compare" element={<Compare />} />
+                    <Route path="cart" element={<Cart />} />
+                    <Route path="checkout" element={<Checkout />} />
+                    <Route path="checkout/complete" element={<CheckoutComplete />} />
+                    <Route path="orders/:number" element={<OrderPage />} />
+                    <Route path="track-order" element={<TrackOrder />} />
                     <Route path="account/sign-in" element={<SignIn />} />
                     <Route path="account/sign-up" element={<SignUp />} />
                     <Route path="account/forgot-password" element={<ForgotPassword />} />

@@ -11,6 +11,8 @@ import { isNigerianPhone } from '../../lib/forms';
 import { getProductsByIds } from '../../data/catalog';
 import { useAsync } from '../../data/useAsync';
 import { usePageMeta } from '../../lib/seo';
+import { formatNaira } from '../../lib/money';
+import { fulfilmentLabel, paymentLabel } from '../checkout/OrderPages';
 
 const input = 'w-full rounded-btn border border-paper-line bg-white px-3.5 py-2.5 text-[0.95rem] text-ink focus:border-brand focus:outline-none focus:ring-2 focus:ring-brand/30 aria-[invalid=true]:border-[#B42318]';
 
@@ -126,11 +128,44 @@ function Empty({ icon: I, title, body, action }: { icon: typeof Package; title: 
   );
 }
 
+type OrderRow = { id: string; order_number: string; access_token: string; created_at: string; total_kobo: number; payment_status: string; fulfilment_status: string; order_items: { quantity: number; product_name: string }[] };
+
 export function OrdersPanel() {
   usePageMeta('Your orders', 'Order history and tracking.');
+  const { user } = useAuth();
+  const orders = useAsync<OrderRow[]>(async () => {
+    const { data, error } = await supabase!.from('orders')
+      .select('id, order_number, access_token, created_at, total_kobo, payment_status, fulfilment_status, order_items(quantity, product_name)')
+      .eq('user_id', user!.id).order('created_at', { ascending: false }).limit(50);
+    if (error) throw error;
+    return (data ?? []) as OrderRow[];
+  }, [user?.id]);
   return (
     <Panel title="Orders" intro="Track deliveries and see past purchases.">
-      <Empty icon={Package} title="No orders yet" body="When you buy something, it will appear here with its payment and delivery status." action={<ButtonLink to="/store" variant="dark">Browse the store</ButtonLink>} />
+      {orders.status === 'loading' ? <p className="text-muted" aria-busy="true">Loading orders…</p>
+        : orders.status === 'error' ? <p role="alert" className="text-muted">{orders.message}</p>
+        : orders.data.length === 0 ? <Empty icon={Package} title="No orders yet" body="When you buy something, it will appear here with its payment and delivery status." action={<ButtonLink to="/store" variant="dark">Browse the store</ButtonLink>} />
+        : (
+          <ul className="divide-y divide-paper-line rounded-card border border-paper-line">
+            {orders.data.map((o) => {
+              const pay = paymentLabel[o.payment_status];
+              const count = o.order_items.reduce((n, i) => n + i.quantity, 0);
+              return (
+                <li key={o.id}>
+                  <Link to={`/orders/${o.order_number}?token=${o.access_token}`} className="flex flex-wrap items-center gap-x-6 gap-y-2 p-4 hover:bg-paper-grey sm:p-5">
+                    <div className="min-w-0 flex-1">
+                      <p className="font-bold text-ink">{o.order_number}</p>
+                      <p className="truncate text-sm text-muted">{new Date(o.created_at).toLocaleDateString('en-NG', { day: 'numeric', month: 'short', year: 'numeric' })} · {count} {count === 1 ? 'item' : 'items'} · {o.order_items[0]?.product_name}{o.order_items.length > 1 ? ' and more' : ''}</p>
+                    </div>
+                    <span className={`rounded-full px-2.5 py-1 text-xs font-semibold ${pay?.tone ?? ''}`}>{pay?.text ?? o.payment_status}</span>
+                    {o.payment_status === 'paid' && <span className="text-sm text-muted">{fulfilmentLabel[o.fulfilment_status]}</span>}
+                    <span className="w-28 text-right font-bold tabular-nums">{formatNaira(o.total_kobo)}</span>
+                  </Link>
+                </li>
+              );
+            })}
+          </ul>
+        )}
     </Panel>
   );
 }
@@ -262,7 +297,7 @@ export function AddressesPanel() {
                   {a.is_default && <span className="rounded-md bg-brand px-2 py-0.5 text-xs font-bold text-ink">Default</span>}
                 </div>
                 <address className="mt-2 text-[0.92rem] not-italic leading-relaxed text-muted">
-                  {a.full_name}<br />{a.line1}{a.line2 ? `, ${a.line2}` : ''}<br />{a.city}, {a.state}{a.landmark ? <><br />Near {a.landmark}</> : null}<br />{a.phone}
+                  {a.full_name}<br />{a.line1}{a.line2 ? `, ${a.line2}` : ''}<br />{a.city}, {a.state}{a.landmark ? <><br />Landmark: {a.landmark}</> : null}<br />{a.phone}
                 </address>
                 <div className="mt-4 flex flex-wrap gap-2">
                   <button onClick={() => { setEditing({ ...blank, ...a, label: a.label ?? '', line2: a.line2 ?? '', landmark: a.landmark ?? '' }); setErrors({}); }} className="inline-flex items-center gap-1.5 rounded-md px-2.5 py-1.5 text-sm font-semibold hover:bg-paper-grey"><Pencil className="h-3.5 w-3.5" />Edit</button>

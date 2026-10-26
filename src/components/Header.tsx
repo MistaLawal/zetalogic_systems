@@ -71,7 +71,8 @@ const navClass = ({ isActive }: { isActive: boolean }) =>
 
 export function Header() {
   const { count } = useCart();
-  const { user } = useAuth();
+  const { user, roles } = useAuth();
+  const isStaff = roles.length > 0;
   const [menuOpen, setMenuOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const location = useLocation();
@@ -122,7 +123,11 @@ export function Header() {
                 <span aria-hidden="true" className="absolute left-[1.55rem] top-[0.55rem] h-2 w-2 rounded-full bg-brand ring-2 ring-white" />
                 <span className="hidden whitespace-nowrap text-[0.9rem] font-semibold lg:inline">My account</span>
               </Link>
-            ) : (
+            ) : null}
+            {user && isStaff && (
+              <Link to="/admin" className="hidden h-10 items-center rounded-btn border border-ink/15 px-3 text-[0.85rem] font-semibold text-ink hover:border-ink/40 lg:flex">Admin</Link>
+            )}
+            {!user && (
               <>
                 <Link to="/account/sign-in" className="grid h-10 w-10 place-items-center rounded-btn text-ink hover:bg-paper-grey lg:hidden" aria-label="Sign in or create an account">
                   <User className="h-5 w-5" />
@@ -214,7 +219,10 @@ export function Header() {
             </nav>
             <div className="space-y-3 border-t border-paper-line p-5">
               {user ? (
-                <ButtonLink to="/account" variant="outline" className="w-full"><User className="h-4 w-4" aria-hidden="true" />My account</ButtonLink>
+                <div className={`grid gap-3 ${isStaff ? 'grid-cols-2' : ''}`}>
+                  <ButtonLink to="/account" variant="outline" className="w-full"><User className="h-4 w-4" aria-hidden="true" />My account</ButtonLink>
+                  {isStaff && <ButtonLink to="/admin" variant="dark" className="w-full">Admin</ButtonLink>}
+                </div>
               ) : (
                 <div className="grid grid-cols-2 gap-3">
                   <ButtonLink to="/account/sign-in" variant="outline" className="whitespace-nowrap !px-3">Sign in</ButtonLink>

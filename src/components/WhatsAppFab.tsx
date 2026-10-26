@@ -5,7 +5,7 @@ import { whatsappHref } from '../lib/contact';
 export function WhatsAppFab() {
   // Hidden on forms where it would cover inputs on small screens.
   const { pathname } = useLocation();
-  if (pathname.startsWith('/account')) return null;
+  if (['/account', '/checkout', '/cart'].some((p) => pathname.startsWith(p))) return null;
   return (
     <a
       href={whatsappHref('Hello Zetalogic Systems, I have a question.')}
